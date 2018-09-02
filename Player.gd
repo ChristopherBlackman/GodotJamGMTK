@@ -60,6 +60,9 @@ func _on_Area2D_body_entered(body):
 	print("ENTER",self,_touching_players,body)
 		
 	pass # replace with function body
+	
+func death():
+	queue_free()
 
 
 func _on_Area2D_body_exited(body):

@@ -30,6 +30,12 @@ func get_grid_location(current_pos):
 	print(Vector2(x,y))
 	return Vector2(x,y)
 	
+func convert_cordinate_to_grid(current_pos):
+	var x = floor(current_pos.x/_GRID_WIDTH)
+	var y = floor(current_pos.y/_GRID_HEIGHT)
+	print(Vector2(x,y))
+	return Vector2(x,y)
+	
 func convert_coordinate(grid):
 	var x = _GRID_POS.x + floor(grid.x)*_GRID_WIDTH -  _GRID_WIDTH/2
 	var y = _GRID_POS.y + floor(grid.y)*_GRID_HEIGHT - _GRID_HEIGHT/2
