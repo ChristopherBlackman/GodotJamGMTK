@@ -47,7 +47,6 @@ func get_input_direction():
 	return Vector2(x, y)
 	
 func setup_bomb():
-	print("dropping Bomb")
 	var bomb = preload("res://bomb.tscn").instance()
 	bomb.position = GRID_MANAGER.get_grid_location(self.position)
 	bomb.init(_touching_players,GRID_MANAGER)
@@ -57,7 +56,6 @@ func setup_bomb():
 func _on_Area2D_body_entered(body):
 	if body.is_in_group("Player") && not body in _touching_players:
 		_touching_players.append(body)
-	print("ENTER",self,_touching_players,body)
 		
 	pass # replace with function body
 	
@@ -69,5 +67,4 @@ func _on_Area2D_body_exited(body):
 	if body.is_in_group("Player") &&  body in _touching_players:
 		_touching_players.erase(body)
 
-	print("EXIT",self,_touching_players,body)
 	pass # replace with function body

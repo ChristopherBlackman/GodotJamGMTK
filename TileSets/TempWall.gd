@@ -1,4 +1,4 @@
-extends Area2D
+extends Sprite
 
 # class member variables go here, for example:
 # var a = 2
@@ -7,18 +7,11 @@ extends Area2D
 func _ready():
 	# Called when the node is added to the scene for the first time.
 	# Initialization here
-	$Sprite/AnimationPlayer.play("start")
 	pass
 
+func destroy():
+	queue_free()
 #func _process(delta):
 #	# Called every frame. Delta is time since last frame.
 #	# Update game logic here.
 #	pass
-
-func destroy():
-	queue_free()
-
-func _on_Explosion_body_entered(body):
-	if body.is_in_group("Player"):
-		body.death()
-	pass # replace with function body
