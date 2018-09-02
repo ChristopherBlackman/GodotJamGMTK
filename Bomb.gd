@@ -9,7 +9,7 @@ var destruct = false
 var _GRID_MANAGER = null
 const SIZE = 32
 
-var in_area = []
+var random_entities = []
 
 const ORIGIN = Vector2(0,0)
 const UP     = Vector2(0,-1)
@@ -28,7 +28,7 @@ func _ready():
 	get_node("RIGHT").cast_to = RIGHT*radius
 	
 
-func init(players,grid_manager,time=3,radius=self.radius):
+func init(players,grid_manager,time=self.time,radius=self.radius):
 	self.time = time
 	self.radius = radius
 	_GRID_MANAGER = grid_manager
@@ -39,19 +39,41 @@ func init(players,grid_manager,time=3,radius=self.radius):
 func _process(delta):
 	if destruct:
 		explode()
-		self.queue_free()
 		pass
+
+#func _exit_tree():
+#	for random in random_entities:
+#		#check if a bomb
+#		print("exiting tree")
+##		print(random)
+##		print(random.get_name())
+#		if((not weakref(random)) and random.has_method("explode")):
+#			print("Sending Message To : ",random," to Explode")
+#			random.explode()
 
 		
 
-func explode():
+func explode(collision_exceptions=[]):
+	print(self,"EXPLODING")
 	
 	var global_grid = _GRID_MANAGER.convert_cordinate_to_grid(self.position,Vector2(0,0))
 	
+	# explosion radius
 	var left 	= global_grid + LEFT*radius
 	var right 	= global_grid + RIGHT*radius
 	var up 		= global_grid + UP*radius
 	var down 	= global_grid + DOWN*radius
+	
+	var left_e = null
+	var right_e = null
+	var up_e = null
+	var down_e = null
+	
+	#Get Ray Nodes
+	var r_down = get_node("DOWN")
+	var r_up = get_node("UP")
+	var r_right = get_node("RIGHT")
+	var r_left = get_node("LEFT")
 	
 	#Static Bodys
 	var min_x = left.x
@@ -60,6 +82,10 @@ func explode():
 	var max_y = down.y
 	
 	var collisions = []
+	var list = []
+	var ray_exceptions = [self,$Area2D] + collision_exceptions
+	
+	print(ray_exceptions)
 	
 	var col_x_max = null
 	var col_x_min = null
@@ -95,6 +121,42 @@ func explode():
 		
 	print(collisions)
 	
+
+	list = [r_up,r_down,r_left,r_right]
+	
+
+#	# enable to ray list and find collisions
+	for ray in list:
+		ray.enabled  = true
+		for except in ray_exceptions:
+			ray.add_exception(except)
+		#ray.add_exception($Area2D)
+		ray.add_exception(self)
+		ray.force_raycast_update()
+
+	# !!check if the ray is colliding or not!!(ray can be infinite)
+	if r_left.is_colliding():
+		left_e = _GRID_MANAGER.convert_cordinate_to_grid(r_left.get_collision_point(),Vector2(-1,0)) + Vector2(1,0)
+		random_entities.append(r_left.get_collider())
+		min_x = max(left_e.x+1,min_x)
+
+	if r_right.is_colliding():
+		right_e = _GRID_MANAGER.convert_cordinate_to_grid(r_right.get_collision_point(),Vector2(1,0)) + Vector2(-1,0)
+		random_entities.append(r_right.get_collider())
+		max_x = min(right_e.x-1,max_x)
+
+	if r_up.is_colliding():
+		up_e = _GRID_MANAGER.convert_cordinate_to_grid(r_up.get_collision_point(),Vector2(0,-1)) + Vector2(0,1)
+		random_entities.append(r_up.get_collider())
+		min_y = max(up_e.y+1,min_y)
+
+	if r_down.is_colliding():
+		down_e = _GRID_MANAGER.convert_cordinate_to_grid(r_down.get_collision_point(),Vector2(0,1)) + Vector2(0,-1)
+		random_entities.append(r_down.get_collider())
+		print("DOWN : ",left_e,min_x)
+		max_y = min(down_e.y,max_y)
+		
+	
 	
 	for item in collisions:
 		if _GRID_MANAGER.destroy(item):
@@ -120,48 +182,18 @@ func explode():
 	explosion.position = self.position
 	_GRID_MANAGER.add_child(explosion)
 	
+	#	for random in random_entities:
+#		#check if a bomb
+#		print("exiting tree")
+##		print(random)
+##		print(random.get_name())
+	#if((not weakref(random)) and random.has_method("explode")):
+		#print("Sending Message To : ",random," to Explode")
+	for random in random_entities:
+		random.destruct()
+	self.queue_free()
 	
-	
-	
-#	var r_down = get_node("DOWN")
-#	var r_up = get_node("UP")
-#	var r_right = get_node("RIGHT")
-#	var r_left = get_node("LEFT")
-#
-#	var left 	= self_grid + LEFT*radius
-#	var right 	= self_grid + RIGHT*radius
-#	var up 		= self_grid + UP*radius
-#	var down 	= self_grid + DOWN*radius
-#
-#
-#	print("self grid",self_grid)
-#
-#	var list = [r_up,r_down,r_left,r_right]
-#	var collisions = []
-#
-#	# enable to ray list and find collisions
-#	for ray in list:
-#		ray.enabled  = true
-#		ray.add_exception($Area2D)
-#		ray.add_exception(self)
-#		ray.force_raycast_update()
-#
-#	# !!check if the ray is colliding or not!!(ray can be infinite)
-#	if r_left.is_colliding():
-#		left = _GRID_MANAGER.convert_cordinate_to_grid(r_left.get_collision_point(),Vector2(-1,0)) + Vector2(1,0)
-#		collisions.append(r_left.get_collider())
-#
-#	if r_right.is_colliding():
-#		right = _GRID_MANAGER.convert_cordinate_to_grid(r_right.get_collision_point(),Vector2(1,0)) + Vector2(-1,0)
-#		collisions.append(r_right.get_collider())
-#
-#	if r_up.is_colliding():
-#		up = _GRID_MANAGER.convert_cordinate_to_grid(r_up.get_collision_point(),Vector2(0,-1)) + Vector2(0,1)
-#		collisions.append(r_up.get_collider())
-#
-#	if r_down.is_colliding():
-#		down = _GRID_MANAGER.convert_cordinate_to_grid(r_down.get_collision_point(),Vector2(0,1)) + Vector2(0,-1)
-#		collisions.append(r_down.get_collider())
+
 #
 #	#Explosion horizonal, vertical, and self
 #	for i in range(left.x,right.x+1):
@@ -200,7 +232,8 @@ func _on_Area2D_body_exited(body):
 	pass # replace with function body
 
 
-
+func destruct():
+	self.destruct = true
 
 
 #func _on_Area2D2_body_entered(body):
@@ -213,18 +246,5 @@ func _on_Timer_timeout():
 	print(time)
 	if time <= 0:
 		get_node("Timer").stop()
-		destruct = true
-	pass # replace with function body
-
-
-func _on_EX_RADIUS_body_entered(body):
-	print(body)
-	if not body in in_area:
-		in_area.append(body)
-	pass # replace with function body
-
-
-func _on_EX_RADIUS_body_exited(body):
-	print(body)
-	in_area.erase(body)
+		destruct()
 	pass # replace with function body

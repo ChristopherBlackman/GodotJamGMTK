@@ -15,12 +15,12 @@ extents = Vector2( 16.1188, 16.1547 )
 custom_solver_bias = 0.0
 extents = Vector2( 8, 8 )
 
-[sub_resource type="StreamTexture" id=4]
+[sub_resource type="StreamTexture" id=3]
 
-flags = 0
+flags = 4
 load_path = "res://.import/block.png-6b65516aa29ec2d9edcd31559ddee83c.stex"
 
-[sub_resource type="TileSet" id=3]
+[sub_resource type="TileSet" id=4]
 
 0/name = "1"
 0/texture = ExtResource( 2 )
@@ -613,7 +613,7 @@ load_path = "res://.import/block.png-6b65516aa29ec2d9edcd31559ddee83c.stex"
 64/navigation_offset = Vector2( 16, 16 )
 64/shapes = [  ]
 65/name = "200"
-65/texture = SubResource( 4 )
+65/texture = SubResource( 3 )
 65/tex_offset = Vector2( 0, 0 )
 65/modulate = Color( 1, 1, 1, 1 )
 65/region = Rect2( 0, 0, 16, 16 )
@@ -627,7 +627,7 @@ load_path = "res://.import/block.png-6b65516aa29ec2d9edcd31559ddee83c.stex"
 "shape_transform": Transform2D( 1, 0, 0, 1, 8, 8 )
 } ]
 66/name = "201"
-66/texture = SubResource( 4 )
+66/texture = SubResource( 3 )
 66/tex_offset = Vector2( 0, 0 )
 66/modulate = Color( 1, 1, 1, 1 )
 66/region = Rect2( 16, 0, 16, 16 )
@@ -636,14 +636,14 @@ load_path = "res://.import/block.png-6b65516aa29ec2d9edcd31559ddee83c.stex"
 66/navigation_offset = Vector2( 8, 8 )
 66/shapes = [  ]
 
-[node name="Root" type="Node" index="0"]
+[node name="Root" type="Node"]
 
 script = ExtResource( 1 )
 
 [node name="Floor" type="TileMap" parent="." index="0"]
 
 mode = 0
-tile_set = SubResource( 3 )
+tile_set = SubResource( 4 )
 cell_size = Vector2( 32, 32 )
 cell_quadrant_size = 16
 cell_custom_transform = Transform2D( 1, 0, 0, 1, 0, 0 )
