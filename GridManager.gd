@@ -46,7 +46,10 @@ func get_tile_type(grid):
 
 func is_destructable(grid):
 	#might add more
-	if not $"Collisions".get_cellv(grid) == 0:
+	var itemId = $"Collisions".get_cellv(grid)
+	if not itemId == 0:
+		spawn_item(itemId,grid)
+		print(itemId)
 		return true
 	return false
 
@@ -62,3 +65,21 @@ func spawn_players():
 	player.GRID_MANAGER = self
 	self.add_child(player)
 	pass
+	
+func spawn_item(id,grid):
+	#turn this into an Enum Later, of Find A Better Method
+	var destructable_wall = 18
+	if id == destructable_wall:
+		var r = randf()
+		if r < 0.3:
+			var power_up = preload("res://PowerUp.tscn").instance()
+			power_up.position = convert_coordinate(grid)
+			power_up._GRID_MANAGER = self
+			self.add_child(power_up)
+		elif r < 0.6:
+			var speed_up = preload("res://SpeedUp.tscn").instance()
+			speed_up.position = convert_coordinate(grid)
+			speed_up._GRID_MANAGER = self
+			self.add_child(speed_up)
+	pass
+	

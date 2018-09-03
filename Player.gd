@@ -4,9 +4,13 @@ extends Node2D
 # var a = 2
 # var b = "textvar"
 const MOTION_SPEED = 100
+const MAX_SPEED    = 400
 var   GRID_MANAGER = null
 var   current_anim = null
 
+var bomb_radius = 1
+var bomb_time   = 3
+var speed_modifier = 1
 var	_touching_players = []
 
 func _ready():
@@ -35,7 +39,7 @@ func _process(delta):
 
 		
 	
-	move_and_slide(motion * MOTION_SPEED)
+	move_and_slide(motion * MOTION_SPEED * speed_modifier)
 	
 	
 	if Input.is_action_just_released("drop_bomb"):
@@ -49,7 +53,7 @@ func get_input_direction():
 func setup_bomb():
 	var bomb = preload("res://bomb.tscn").instance()
 	bomb.position = GRID_MANAGER.get_grid_location(self.position)
-	bomb.init(_touching_players,GRID_MANAGER)
+	bomb.init(_touching_players,GRID_MANAGER,bomb_time,bomb_radius)
 	get_node("../..").add_child(bomb)
 
 
@@ -68,3 +72,17 @@ func _on_Area2D_body_exited(body):
 		_touching_players.erase(body)
 
 	pass # replace with function body
+	
+func change_radius_by(increase):
+	self.bomb_radius += increase
+	print("Player : ",self," bomb radius increase : ",bomb_radius)
+
+func change_speed_modifier_by(increase):
+	if (speed_modifier+increase)*MOTION_SPEED > MAX_SPEED:
+		speed_modifier = MAX_SPEED/MOTION_SPEED
+	else:
+		self.speed_modifier += increase
+	print("Player : ",self," speed modifier change ",speed_modifier)
+	
+	
+
